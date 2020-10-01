@@ -232,16 +232,26 @@ starbucks_with_2018_pop_est %>%
 
 ```{r}
 favorite_places <- tibble(
-  place = c("Peet's", "Sport and Health", "Politics and Prose", "The Fridge", "Arts Club of Washington", "National Arboretum", "Fort Reno", "Home", "Keren", "Lincoln Park"),
-  long = c(-77.04769, -77.07686, -77.06966,-76.994719, -77.045735, -76.970750, -77.078323, -77.076795, -77.041293, -76.989827),
-  lat = c(38.89958, 38.94187, 38.95545, 38.882138, 38.901478, 38.908140, 38.951265, 38.937272,
+  place = c("Home", "Sport and Health",  "Peet's", "Politics and Prose", "The Fridge", "Arts Club of Washington", "National Arboretum", "Fort Reno", "Keren", "Lincoln Park"),
+  long = c(-77.076795, -77.07686, -77.04769, -77.06966,-76.994719, -77.045735, -76.970750, -77.078323, -77.041293, -76.989827),
+  lat = c(38.937272,38.94187, 38.89958, 38.95545, 38.882138, 38.901478, 38.908140, 38.951265, 
           38.916769, 38.889663),
-  top_3 = c("No","No","Yes","No","No","Yes","No","Yes","No","No")
+  top_3 = c("Yes","No","Yes","No","No","Yes","No","No","No","No")
   )
 
-leaflet(data = favorite_places) %>%
+pal <- colorFactor("viridis",
+                   domain = favorite_places$top_3)
+
+leaflet(favorite_places) %>% 
   addTiles() %>%
-  addCircles()
+  addCircleMarkers(lng = ~long,
+                   lat = ~lat,
+                   stroke = FALSE,
+                   radius = 5,
+                   color = ~pal(top_3),
+                   fillOpacity = .7) %>%
+  addPolylines(lng = ~long,
+               lat = ~lat)
 
 ```
 
@@ -312,7 +322,8 @@ ggmap(dc_map) +
   geom_point(data = rider_type,
              aes(x = long, y = lat, color = percent_casual)) +
   scale_color_gradient(low = "Blue", high = "Red") +
-  labs(title = "Proportion of bikes used by casual users in Washington DC")
+  labs(title = "Proportion of bikes used by casual users in Washington DC",
+       color = "Trips by casual users (proportion)")
 
 ```
   
@@ -394,20 +405,54 @@ MplsStops %>%
   15. Use a `leaflet` map and the `MplsStops` dataset to display each of the stops on a map as a small point. Color the points differently depending on whether they were for suspicious vehicle/person or a traffic stop (the `problem` variable). HINTS: use `addCircleMarkers`, set `stroke = FAlSE`, use `colorFactor()` to create a palette.  
   
 ```{r}
-MplsStops
+pal <- colorFactor("viridis",
+                   domain = MplsStops$problem)
+
+leaflet(MplsStops) %>% 
+  addTiles() %>%
+  addCircleMarkers(lng = ~long,
+                   lat = ~lat,
+                   stroke = FALSE,
+                   radius = 1,
+                   color = ~pal(problem),
+                   fillOpacity = .7)
+  
 ```
   
   
   16. Save the folder from moodle called Minneapolis_Neighborhoods into your project/repository folder for this assignment. Make sure the folder is called Minneapolis_Neighborhoods. Use the code below to read in the data and make sure to **delete the `eval=FALSE`**. Although it looks like it only links to the .sph file, you need the entire folder of files to create the `mpls_nbhd` data set. These data contain information about the geometries of the Minneapolis neighborhoods. Using the `mpls_nbhd` dataset as the base file, join the `mpls_suspicious` and `MplsDemo` datasets to it by neighborhood (careful, they are named different things in the different files). Call this new dataset `mpls_all`.
 
-```{r, eval=FALSE}
-mpls_nbhd <- st_read("Minneapolis_Neighborhoods/Minneapolis_Neighborhoods.shp", quiet = TRUE)
+```{r}
+mpls_nbhd <- st_read("Minneapolis_Neighborhoods.shp", quiet = TRUE)
+
+mpls_nbhd %>%
+  left_join(mpls_suspicious,
+            by = c("BDNAME" = "neighborhood")) %>%
+  left_join(MplsDemo,
+            by = c("BDNAME" = "neighborhood")) -> mpls_all
 ```
 
   17. Use `leaflet` to create a map from the `mpls_all` data  that colors the neighborhoods by `prop_suspicious`. Display the neighborhood name as you scroll over it. Describe what you observe in the map.
   
+  In the map, we can o
+```{r}
+pal <- colorFactor("viridis",
+                   domain = mpls_all$prop_suspicious)
+
+leaflet(mpls_all) %>%
+  addTiles() %>%
+  addPolygons(stroke = FALSE,
+              fillColor = ~pal(prop_suspicious),
+              fillOpacity = .7,
+              label = ~BDNAME)
+```
+  
+  
   18. Use `leaflet` to create a map of your own choosing. Come up with a question you want to try to answer and use the map to help answer that question. Describe what your map shows. 
   
+```{r}
+
+```
   
 ## GitHub link
 
