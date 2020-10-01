@@ -450,7 +450,7 @@ leaflet(mpls_all) %>%
   
   18. Use `leaflet` to create a map of your own choosing. Come up with a question you want to try to answer and use the map to help answer that question. Describe what your map shows. 
   
-  In this map I want to find out which neighborhoods have the highest number of suspicious person/vehicle stops per capita. The map shows us that the neighborhoods with the fewest suspicious stops per person are in the southwest of the city whereas the neighborhoods with the most tend to be in the northeast and central north of the city.
+  In this map I want to find out which neighborhoods have the highest number of suspicious person/vehicle stops per capita. The map shows us that the neighborhoods with the fewest suspicious stops per person are in the southwest of the city whereas the neighborhoods with the most tend to be in the northeast and center of the city.
 ```{r}
 mpls_all %>%
   mutate(sum_sus = neighborhood_stops*prop_suspicious,
@@ -472,6 +472,8 @@ leaflet(all_w_stops) %>%
 ## GitHub link
 
   19. Below, provide a link to your GitHub page with this set of Weekly Exercises. Specifically, if the name of the file is 04_exercises.Rmd, provide a link to the 04_exercises.md file, which is the one that will be most readable on GitHub.
+  
+  https://github.com/ckollmer01/weekly_exercises_4
 
 
 **DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
