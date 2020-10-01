@@ -232,14 +232,14 @@ starbucks_with_2018_pop_est %>%
 
 ```{r}
 favorite_places <- tibble(
-  place = c("Home", "Sport and Health",  "Peet's", "Politics and Prose", "The Fridge", "Arts Club of Washington", "National Arboretum", "Fort Reno", "Keren", "Lincoln Park"),
-  long = c(-77.076795, -77.07686, -77.04769, -77.06966,-76.994719, -77.045735, -76.970750, -77.078323, -77.041293, -76.989827),
-  lat = c(38.937272,38.94187, 38.89958, 38.95545, 38.882138, 38.901478, 38.908140, 38.951265, 
-          38.916769, 38.889663),
-  top_3 = c("Yes","No","Yes","No","No","Yes","No","No","No","No")
+  place = c("Home", "Sport and Health",  "Peet's", "Politics and Prose", "Arts Club of Washington", "National Arboretum", "Fort Reno", "Keren", "Lincoln Park", "The Fridge"),
+  long = c(-77.076795, -77.07686, -77.04769, -77.06966, -77.045735, -76.970750, -77.078323, -77.041293, -76.989827, -76.994719),
+  lat = c(38.937272,38.94187, 38.89958, 38.95545, 38.901478, 38.908140, 38.951265, 
+          38.916769, 38.889663, 38.882138),
+  top_3 = c("Yes","No","No","No","No","Yes","No","Yes","No","No")
   )
 
-pal <- colorFactor("viridis",
+pal <- colorFactor(c("#3232ed","#de1818"),
                    domain = favorite_places$top_3)
 
 leaflet(favorite_places) %>% 
@@ -434,7 +434,7 @@ mpls_nbhd %>%
 
   17. Use `leaflet` to create a map from the `mpls_all` data  that colors the neighborhoods by `prop_suspicious`. Display the neighborhood name as you scroll over it. Describe what you observe in the map.
   
-  In the map, we can o
+  In the map, we can observe that 
 ```{r}
 pal <- colorFactor("viridis",
                    domain = mpls_all$prop_suspicious)
@@ -450,8 +450,23 @@ leaflet(mpls_all) %>%
   
   18. Use `leaflet` to create a map of your own choosing. Come up with a question you want to try to answer and use the map to help answer that question. Describe what your map shows. 
   
+  In this map I want to find out which neighborhoods have the highest number of suspicious person/vehicle stops per capita. The map shows us that the neighborhoods with the fewest suspicious stops per person are in the southwest of the city whereas the neighborhoods with the most tend to be in the northeast and central north of the city.
 ```{r}
+mpls_all %>%
+  mutate(sum_sus = neighborhood_stops*prop_suspicious,
+         sus_stops_per_person = sum_sus/population) -> all_w_stops
 
+pal <- colorFactor("viridis",
+                   domain = all_w_stops$sus_stops_per_person)
+
+
+leaflet(all_w_stops) %>%
+  addTiles() %>%
+  addPolygons(stroke = FALSE,
+              fillColor = ~pal(sus_stops_per_person),
+              fillOpacity = .7,
+              label = ~BDNAME)
+  
 ```
   
 ## GitHub link
